@@ -1,0 +1,20 @@
+{% extends 'blog/base.html' %}
+
+{%block body_block%}
+<h1 class="display-4 mt-5"><strong>All Posts</strong></h1>
+ <hr>
+<div class="container text-center"></div>
+{%for post in post_list %}
+    <div class="row mb-3">
+    <div class="col-3">
+        <p>{{ post.publish_time|date:"F j, Y" }}</p>
+    </div>
+    <div class="col-6">
+    <h4><a href="{% url 'post_detail' pk=post.pk %}"><p>{{post.title}}</p></a></h4>
+</div>
+<a class="col-3" href="{% url 'post_detail' pk=post.pk %}">Comments:{{post.approve_comment.count}}</a>
+
+</div>
+{%endfor%}
+</div>
+{%endblock%}

@@ -1,0 +1,55 @@
+{% extends 'blog/base.html' %}
+{%block body_block%}
+<div class="container">
+{%if post.publish_time %}
+<div>
+<p class="mt-5 d-flex justify-content-center">{{ post.publish_time|date:"F j, Y" }}</p>
+</div>
+{%else%}
+<a class="btn btn-outline-primary mb-3" href="{% url 'publish' pk=post.pk %}">Publish</a>
+{%endif%}
+<h1 class="display-4 d-flex justify-content-center title"><strong>{{post.title}}</strong></h1>
+<hr>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            {% if user.is_authenticated %}
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-outline-warning"  href="{% url 'edit' pk=post.pk %}">Update</a>
+                <a class="btn btn-outline-danger" href="{% url 'delete' pk=post.pk %}">Delete</a>
+            </div>
+            {% endif %}
+            <hr>
+            <a class="btn btn-outline-primary" href="{% url 'add_comment' pk=post.pk %}">Add comment</a>
+            {% for comment in post.comments.all %}
+            <br>
+            {% if user.is_authenticated or comment.approved_comments %}
+            <p><small>{{ comment.create_time|date:"F j, Y"  }}</small></p>
+                    {% if not comment.approved_comments %}
+                    <div class="d-flex justify-content-around">
+                        <a class="btn btn-outline-warning"  href="{% url 'delete_comment' pk=comment.pk %}">Delete Comment</a>
+                        <a class="btn btn-outline-danger" href="{% url 'approve_comment' pk=comment.pk %}">Approve Comment</a>
+                    </div>
+                    {% endif %}
+                <p>{{ comment.text|safe|linebreaks }}</p>
+                <figcaption class="blockquote-footer text-end">
+                   <cite title="Source Title">Posted by: {{ comment.author }}</cite>
+                  </figcaption>
+            {% endif %}
+            {% empty %}
+            <p>No comments posted.</p>
+            {% endfor %}
+
+
+        </div>
+        <div class="col-sm-8 ms-3">
+            <p class="content">{{ post.text|safe|linebreaksbr }}</p>
+        </div>
+
+
+
+
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -1,15 +1,17 @@
-{% extends 'blog\base.html' %}
+{% extends 'blog/base.html' %}
 {%block body_block%}
-<h2>Please Login: </h2>
-{%if form.error%}
+
+<div class="logBox">   
+      <h2 class="text-center">Please login</h2>
+      {%if form.error%}
 <p>Check your Username or Password</p>
 {%endif%}
-
-<form action="{%url 'login'%}" method="POST">
+<form action="{%url 'login'%}" method='POST'>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Submit</button>
-    <input type="hidden" name="'next" value="{{next}}">
+    <input type='email'class='form-control' name='email' placeholder='Email'/><br>
+    <input type='password'class='form-control' name='password' placeholder='Password'/><br>
+    <button type='submit' class="btn btn-primary">Submit</button>
 </form>
-
+</div>
 {%endblock%}
+

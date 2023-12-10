@@ -9,3 +9,58 @@ a{
 .title {
     text-align: center;
 }
+
+.tox-tinymce {
+    border-radius: 10px !important;
+}
+label{
+    display: none !important;
+}
+ul.errorlist.nonfield {
+    list-style-type: none;
+    color: red;
+}
+.commentBox{
+    border: 1px solid #cbcbcb59;
+    border-radius: 10px;
+}
+
+.blogBox{
+    border: 1px solid #cbcbcb59;
+    border-radius: 10px;
+
+}
+nav{
+    background: #0088ff2b;
+    border: 1px solid #0088ff4f;
+    border-radius: 10px;
+}
+
+.bcol{
+    background-color: #0088ff2b;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.logBox {
+    max-width: 380px;
+    padding: 15px 35px 45px;
+    margin: 100px auto;
+    border: 1px solid #8686862b;
+    border-radius: 10px 
+}
+.form-control {
+    margin-bottom: 5px;
+}
+
+.inputbox{
+    position: relative;
+}
+p#emailAvailability {
+    position: absolute;
+    bottom: -14px;
+    font-size: 14px;
+    color: red;
+}
+.img-fluid{
+    border-radius:10px;
+}

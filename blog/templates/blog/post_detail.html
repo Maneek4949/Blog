@@ -1,55 +1,110 @@
 {% extends 'blog/base.html' %}
-{%block body_block%}
-<div class="container">
-{%if post.publish_time %}
-<div>
-<p class="mt-5 d-flex justify-content-center">{{ post.publish_time|date:"F j, Y" }}</p>
-</div>
-{%else%}
-<a class="btn btn-outline-primary mb-3" href="{% url 'publish' pk=post.pk %}">Publish</a>
-{%endif%}
-<h1 class="display-4 d-flex justify-content-center title"><strong>{{post.title}}</strong></h1>
-<hr>
-<div class="container">
-    <div class="row">
-        <div class="col-sm-3">
-            {% if user.is_authenticated %}
-            <div class="d-flex justify-content-between">
-                <a class="btn btn-outline-warning"  href="{% url 'edit' pk=post.pk %}">Update</a>
-                <a class="btn btn-outline-danger" href="{% url 'delete' pk=post.pk %}">Delete</a>
+{% block body_block %}
+    <div class="container">
+        {% if post.publish_time %}
+            <div>
+                <p class="">{{ post.publish_time|date:"F j, Y" }}</p>
             </div>
+            {% if post.disabled %}
+                <form method="POST" action="{% url 'enable_post' pk=post.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Enable</button>
+                </form>
+            {% else %}
+                <form method="POST" action="{% url 'disable_post' pk=post.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Disable</button>
+                </form>
             {% endif %}
-            <hr>
-            <a class="btn btn-outline-primary" href="{% url 'add_comment' pk=post.pk %}">Add comment</a>
-            {% for comment in post.comments.all %}
-            <br>
-            {% if user.is_authenticated or comment.approved_comments %}
-            <p><small>{{ comment.create_time|date:"F j, Y"  }}</small></p>
-                    {% if not comment.approved_comments %}
-                    <div class="d-flex justify-content-around">
-                        <a class="btn btn-outline-warning"  href="{% url 'delete_comment' pk=comment.pk %}">Delete Comment</a>
-                        <a class="btn btn-outline-danger" href="{% url 'approve_comment' pk=comment.pk %}">Approve Comment</a>
-                    </div>
+        {% else %}
+            <a class="btn btn-outline-primary mb-3" href="{% url 'publish' pk=post.pk %}">Publish</a>
+        {% endif %}
+        <div class="container-fluid">
+            <div class="row container">
+                <div class="col-sm-8 mb-4">
+                    {% if post.cover_image%}
+                        <img src="{{ post.cover_image.url }}" class="img-fluid" alt="{{ post.title }} Cover Image"/>
                     {% endif %}
-                <p>{{ comment.text|safe|linebreaks }}</p>
-                <figcaption class="blockquote-footer text-end">
-                   <cite title="Source Title">Posted by: {{ comment.author }}</cite>
-                  </figcaption>
-            {% endif %}
-            {% empty %}
-            <p>No comments posted.</p>
-            {% endfor %}
+                    <h2 class="display-6 text-center title"><strong>{{ post.title }}</strong></h2>
+                    <p class="content">{{ post.text|safe|linebreaksbr }}</p>
 
+                    {% if user.is_authenticated %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ like_form }}
+                            <button class="btn btn-primary"  type="submit">
+                                {%if status%}
+                                Dislike
+                                {%else%}
+                                Like
+                                {%endif%}</button>
+                        </form>
+                    {% endif %}
+                    
+                    <p>{{post.likes.count}}</p>
 
+                
+
+                </div>
+                <div class="col-sm-4">
+                    {% if user.is_authenticated %}
+                        {% if user.username == post.author.username %}
+                            <div class="d-flex justify-content-between">
+                                <a class="btn btn-outline-warning" href="{% url 'edit' pk=post.pk %}">Update</a>
+                                <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    href="{% url 'delete' pk=post.pk %}">Delete</a>
+                            </div>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Blog</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form class="modal-body" action="{% url 'delete' pk=post.pk %}" method="post">
+                                            {% csrf_token %}
+                                            <p>Are you sure you want to delete "{{ post.title }}"</p>
+                                            <button type="submit" value="Confirm" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        <div class="container mb-4 p-0">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button class="btn btn-primary" type="submit">Add Comment</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                    <br>
+                    {% for comment in post.comments.all %}
+                        {% if user.is_authenticated %}
+                            {% if not comment.approved_comments %}
+                                <div class="d-flex justify-content-between mb-1">
+                                    <a class="btn btn-outline-warning" href="{% url 'delete_comment' pk=comment.pk %}">
+                                        <small>Delete Comment</small></a>
+                                    <a class="btn btn-outline-danger" href="{% url 'approve_comment' pk=comment.pk %}">
+                                        <small>Approve Comment</small></a>
+                                </div>
+                            {% endif %}
+                            <div class="mb-2 commentBox">
+                                <div class="d-flex justify-content-between bcol">
+                                    <b class="text-secondary  px-2">@{{ comment.author }}</b>
+                                    <p class="text-secondary px-2"><small>{{ comment.create_time|date:"F j, Y" }}</small></p>
+                                </div>
+                                <p class="px-2"><small>{{ comment.text }}</small></p>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <p>No comments posted.</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="col-sm-8 ms-3">
-            <p class="content">{{ post.text|safe|linebreaksbr }}</p>
-        </div>
-
-
-
-
     </div>
-</div>
-</div>
 {% endblock %}

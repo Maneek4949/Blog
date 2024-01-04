@@ -2,20 +2,25 @@
 {% block body_block %}
     <div class="container">
         {% if post.publish_time %}
-            <div>
-                <p class="">{{ post.publish_time|date:"F j, Y" }}</p>
-            </div>
-            {% if post.disabled %}
-                <form method="POST" action="{% url 'enable_post' pk=post.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-success">Enable</button>
-                </form>
-            {% else %}
-                <form method="POST" action="{% url 'disable_post' pk=post.pk %}">
+            
+            {% if user.username == post.author.username %}
+            {% if post.enabled %}
+            <form method="POST" action="{% url 'disable_post' pk=post.pk %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Disable</button>
                 </form>
+                
+            {% else %}
+            <form method="POST" action="{% url 'enable_post' pk=post.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Enable</button>
+                </form>
+                
             {% endif %}
+            {%endif%}
+            <div>
+                <p class="">{{ post.publish_time|date:"F j, Y" }}</p>
+            </div>
         {% else %}
             <a class="btn btn-outline-primary mb-3" href="{% url 'publish' pk=post.pk %}">Publish</a>
         {% endif %}

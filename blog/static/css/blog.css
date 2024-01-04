@@ -20,6 +20,9 @@ ul.errorlist.nonfield {
     list-style-type: none;
     color: red;
 }
+ul {
+    list-style: none;
+  }
 .commentBox{
     border: 1px solid #cbcbcb59;
     border-radius: 10px;
@@ -63,4 +66,31 @@ p#emailAvailability {
 }
 .img-fluid{
     border-radius:10px;
+}
+.stats {
+    cursor: default;
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+    margin: 0;
+    line-height: 35px;
+}
+.stats li {
+    border-left: solid 1px rgba(160, 160, 160, 0.3);
+    display: inline-block;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    margin: 0 0 0 2em;
+    padding: 0 0 0 2em;
+    text-transform: uppercase;
+   
+}
+.blg{
+    border-radius: 10px;
+    background-color:#0088ff2b;
+}
+.actions{
+    height: 84px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

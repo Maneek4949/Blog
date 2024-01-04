@@ -1,10 +1,11 @@
-from blog.models import Post,Comment,Like
+from blog.models import Post,Comment,Like, Category
 from django import forms
 from tinymce.widgets import TinyMCE
 
 
 
 class PostForm(forms.ModelForm):
+    # category = forms.ModelChoiceField(queryset=Category.objects.all(),empty_label='Select a Category')
     class Meta:
         model = Post
         fields = ('title', 'text','cover_image')

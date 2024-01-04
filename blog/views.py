@@ -27,7 +27,7 @@ class PostList(LoginRequiredMixin,ListView):
     login_url = ""
     model = Post
     def get_queryset(self):
-        return Post.objects.filter(publish_time__lte=timezone.now(),disabled=True).order_by('-publish_time')
+        return Post.objects.filter(publish_time__lte=timezone.now(),enabled=True).order_by('-publish_time')
 
 #MyPost displays Lists of single User Post only
 class MyPost(ListView):
@@ -39,14 +39,14 @@ class MyPost(ListView):
 class Permission(UserPassesTestMixin):
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author and not post.enabled
+        return self.request.user == post.author or post.enabled
 
     def handle_no_permission(self):
         raise PermissionDenied("You do not have permission to access this post.")
 
 
 #PostDetail displays the details of post with pk id
-class PostDetail(DetailView):
+class PostDetail(Permission,DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
 
@@ -56,6 +56,7 @@ class PostDetail(DetailView):
         like = Like.objects.filter(post=post, user=request.user).values()
         form = CommentForm()
         return render(request, self.template_name, {'post': post, 'form': form, 'like_form': like_form, 'status': like})
+        
 
     def post(self, request, *args, **kwargs):
         post = get_object_or_404(Post, pk=self.kwargs['pk'])

@@ -16,7 +16,7 @@ function toggleTheme() {
 
 $(document).ready(function () {
     $('#id_email').on('input', function () {
-        var email = $(this).val();
+        var email = $(this).val().trim();
         $.ajax({
             type: 'GET',
             url: '/check_email_availability/',

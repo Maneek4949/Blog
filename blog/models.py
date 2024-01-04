@@ -4,6 +4,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User,auth
 # Create your models here.
 
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=256,unique=True)
+
 class Post(models.Model):
     author = models.ForeignKey('auth.User',on_delete=models.CASCADE)
     title = models.CharField(max_length=256)
@@ -12,17 +17,19 @@ class Post(models.Model):
     publish_time = models.DateTimeField(blank=True,null=True)
     cover_image = models.ImageField(upload_to='blog_cover',blank=True)
     likes = models.ManyToManyField(User, through='Like', related_name='liked_posts')
-    disabled = models.BooleanField(default=False)
+    enabled = models.BooleanField(default=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
+
     
     def publish(self):
         self.publish_time = timezone.now()
         self.save()
 
     def enable(self):
-        self.disabled = False
+        self.enabled = True
         self.save()
     def disable(self):
-        self.disabled = True
+        self.enabled = False
         self.save()
 
     def approve_comment(self):
